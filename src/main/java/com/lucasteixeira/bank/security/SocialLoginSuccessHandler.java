@@ -54,7 +54,7 @@ public class SocialLoginSuccessHandler implements AuthenticationSuccessHandler {
                 newUser.setActive(ActivityEnum.ACTIVE);
                 newUser.setAge(0);
                 newUser.setMaritalStatus(MaritalStatusEnum.SINGLE);
-                newUser.setCpf("70839953046"); // Dummy para teste
+                newUser.setCpf("70839953046");
 
                 userRepository.save(newUser);
                 System.out.println("Usuário criado via " + providerId + ": " + email);

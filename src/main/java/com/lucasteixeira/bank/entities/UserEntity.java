@@ -5,7 +5,6 @@ import com.lucasteixeira.bank.enums.AccessEnum;
 import com.lucasteixeira.bank.enums.ActivityEnum;
 import com.lucasteixeira.bank.enums.MaritalStatusEnum;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
