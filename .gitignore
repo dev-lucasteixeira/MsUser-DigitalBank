@@ -36,7 +36,8 @@ out/
 ### VS Code ###
 .vscode/
 
-**/src/main/resources/application.properties
 
 *.class
 *.log
+
+**/src/main/java/com/lucasteixeira/bank/anotacoes
