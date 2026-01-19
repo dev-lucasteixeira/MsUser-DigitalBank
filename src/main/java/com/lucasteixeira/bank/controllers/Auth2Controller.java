@@ -30,4 +30,6 @@ public class Auth2Controller {
     //http://localhost:8081/login/oauth2/code/google
 
     //http://localhost:8081/login/oauth2/code/facebook
+
+    //http://localhost:8081/login
 }
