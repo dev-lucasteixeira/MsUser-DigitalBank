@@ -20,33 +20,25 @@ public class UserDTO {
 
     private UUID id;
 
-    @NotNull(message = "O CPF é obrigatório")
     @Cpf(message = "O formato do CPF é inválido")
     private String cpf;
 
-    @NotNull
     @Size(min = 3, max = 255)
     private String name;
 
-    @NotNull
     @Email(message = "Insira um email válido")
     @Size(min = 3, max = 255)
     private String email;
 
-    @NotNull
     @Size(min = 3, max = 255)
     private String password;
 
-    @NotNull
     private Integer age;
 
-    @NotNull
     private MaritalStatusEnum maritalStatus;
 
-    @NotNull
     private AccessEnum access;
 
-    @NotNull
     private ActivityEnum active;
 
 

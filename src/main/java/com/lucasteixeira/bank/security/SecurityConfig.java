@@ -24,34 +24,38 @@ public class SecurityConfig {
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
     public static final String SECURITY_SCHEME = "bearerAuth";
+    private final SocialLoginSuccessHandler socialLoginSuccessHandler;
 
     @Autowired
-    public SecurityConfig(JwtUtil jwtUtil, UserDetailsService userDetailsService) {
+    public SecurityConfig(JwtUtil jwtUtil, UserDetailsService userDetailsService, SocialLoginSuccessHandler socialLoginSuccessHandler) {
         this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
+        this.socialLoginSuccessHandler = socialLoginSuccessHandler;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // Instancia o filtro (assumindo que as classes existem)
         JwtRequestFilter jwtRequestFilter = new JwtRequestFilter(jwtUtil, userDetailsService);
 
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
+
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "swagger-ui.html").permitAll()
-
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-
                         .requestMatchers(HttpMethod.POST, "/user").permitAll()
-
                         .requestMatchers(HttpMethod.GET, "/user/endereco/**").permitAll()
+
+                        .requestMatchers("/", "/login**", "/error**", "/oauth2/**").permitAll()
 
                         .anyRequest().authenticated()
                 )
+                .oauth2Login(oauth2 -> oauth2
+                .successHandler(socialLoginSuccessHandler)
+        )
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
