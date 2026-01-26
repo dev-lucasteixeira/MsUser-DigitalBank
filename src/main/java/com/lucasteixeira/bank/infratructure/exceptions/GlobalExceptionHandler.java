@@ -21,6 +21,7 @@ public class GlobalExceptionHandler {
                 "path", "/user/me"
         ));
     }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
@@ -28,6 +29,17 @@ public class GlobalExceptionHandler {
                 "status", 500,
                 "error", "Erro Interno",
                 "message", ex.getMessage()
+        ));
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleResourceNotFound(ResourceNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
+                "timestamp", LocalDateTime.now(),
+                "status", 404,
+                "error", "Não Encontrado",
+                "message", ex.getMessage(),
+                "path", "/user"
         ));
     }
 }
