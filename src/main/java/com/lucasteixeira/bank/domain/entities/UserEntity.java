@@ -1,9 +1,9 @@
 package com.lucasteixeira.bank.domain.entities;
 
 
-import com.lucasteixeira.bank.application.enums.AccessEnum;
-import com.lucasteixeira.bank.application.enums.ActivityEnum;
-import com.lucasteixeira.bank.application.enums.MaritalStatusEnum;
+import com.lucasteixeira.bank.domain.enums.AccessEnum;
+import com.lucasteixeira.bank.domain.enums.ActivityEnum;
+import com.lucasteixeira.bank.domain.enums.MaritalStatusEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;

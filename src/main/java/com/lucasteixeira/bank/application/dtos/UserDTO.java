@@ -1,9 +1,9 @@
 package com.lucasteixeira.bank.application.dtos;
 
 import com.lucasteixeira.bank.application.constraints.annotations.Cpf;
-import com.lucasteixeira.bank.application.enums.AccessEnum;
-import com.lucasteixeira.bank.application.enums.ActivityEnum;
-import com.lucasteixeira.bank.application.enums.MaritalStatusEnum;
+import com.lucasteixeira.bank.domain.enums.AccessEnum;
+import com.lucasteixeira.bank.domain.enums.ActivityEnum;
+import com.lucasteixeira.bank.domain.enums.MaritalStatusEnum;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 import lombok.*;

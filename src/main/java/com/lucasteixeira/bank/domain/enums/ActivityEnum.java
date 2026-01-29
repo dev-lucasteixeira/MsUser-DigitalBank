@@ -1,4 +1,4 @@
-package com.lucasteixeira.bank.application.enums;
+package com.lucasteixeira.bank.domain.enums;
 
 public enum ActivityEnum {
     ACTIVE,

@@ -1,16 +1,15 @@
 package com.lucasteixeira.bank.application.services;
 
 import com.lucasteixeira.bank.application.dtos.UserDTO;
-import com.lucasteixeira.bank.application.enums.AccessEnum;
-import com.lucasteixeira.bank.application.enums.ActivityEnum;
-import com.lucasteixeira.bank.application.enums.MaritalStatusEnum;
+import com.lucasteixeira.bank.domain.enums.AccessEnum;
+import com.lucasteixeira.bank.domain.enums.ActivityEnum;
+import com.lucasteixeira.bank.domain.enums.MaritalStatusEnum;
 import com.lucasteixeira.bank.application.mappers.UserMapper;
 import com.lucasteixeira.bank.domain.entities.UserEntity;
 import com.lucasteixeira.bank.domain.repositories.UserRepository;
 import com.lucasteixeira.bank.infratructure.exceptions.ConflitException;
 import com.lucasteixeira.bank.infratructure.exceptions.ResourceNotFoundException;
 import com.lucasteixeira.bank.infratructure.security.JwtUtil;
-import org.h2.engine.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

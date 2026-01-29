@@ -1,8 +1,8 @@
 package com.lucasteixeira.bank.application.services;
 
 import com.lucasteixeira.bank.application.dtos.UserDTO;
-import com.lucasteixeira.bank.application.enums.AccessEnum;
-import com.lucasteixeira.bank.application.enums.ActivityEnum;
+import com.lucasteixeira.bank.domain.enums.AccessEnum;
+import com.lucasteixeira.bank.domain.enums.ActivityEnum;
 import com.lucasteixeira.bank.domain.entities.UserEntity;
 import com.lucasteixeira.bank.infratructure.exceptions.ConflitException;
 import com.lucasteixeira.bank.application.mappers.UserMapper;
@@ -10,6 +10,8 @@ import com.lucasteixeira.bank.domain.repositories.UserRepository;
 import com.lucasteixeira.bank.infratructure.exceptions.ResourceNotFoundException;
 import com.lucasteixeira.bank.infratructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -59,6 +61,7 @@ public class UserService {
         return "Bearer "+ jwtUtil.generateToken(userDTO.getEmail());
     }
 
+    @Cacheable(value = "users", key = "#email")
     public UserDTO getUserInfoByEmail(String email) {
         UserEntity user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException(message));
@@ -67,6 +70,7 @@ public class UserService {
     }
 
     @Transactional
+    @CacheEvict(value = "users", key = "#email")
     public String deleteAccount(String email) {
         if (!userRepository.existsByEmail(email)) {
             throw new ResourceNotFoundException("Email não cadastrado: " + email);
@@ -77,20 +81,29 @@ public class UserService {
         return "Conta deletada com sucesso: " + email;
     }
 
-
+    @CacheEvict(value = "users", key = "#email")
     public UserDTO updateUser(UserDTO userDTO, String email) {
         UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException(message));
 
-        if (userEntity.getName().equals(userDTO.getName())) {
-            throw new ConflitException("Nome é igual ao atual");
+        boolean isChanged = false;
+
+        if (userDTO.getName() != null && !userDTO.getName().equals(userEntity.getName())) {
+            userEntity.setName(userDTO.getName());
+            isChanged = true;
         }
 
-        if (Objects.equals(userEntity.getAge(), userDTO.getAge())) {
-            throw new ConflitException("Idade é igual a atual");
+        if (userDTO.getAge() != null && !Objects.equals(userDTO.getAge(), userEntity.getAge())) {
+            userEntity.setAge(userDTO.getAge());
+            isChanged = true;
         }
 
-        if (userEntity.getMaritalStatus().equals(userDTO.getMaritalStatus())) {
-            throw new ConflitException("Marital Status é igual ao atual");
+        if (userDTO.getMaritalStatus() != null && userEntity.getMaritalStatus() != userDTO.getMaritalStatus()) {
+            userEntity.setMaritalStatus(userDTO.getMaritalStatus());
+            isChanged = true;
+        }
+
+        if (!isChanged) {
+            throw new ConflitException("Nenhum dado foi alterado. Os valores enviados são idênticos aos atuais.");
         }
 
         userEntity.setName(userDTO.getName());
@@ -100,11 +113,12 @@ public class UserService {
         return userMapper.toDTO(userRepository.save(userEntity));
     }
 
+    @CacheEvict(value = "users", key = "#email")
     public UserDTO updatePassword(UserDTO userDTO, String email) {
         UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException(message));
 
-        if (userEntity.getPassword().equals(userDTO.getPassword())) {
-            throw new ConflitException("Senha está igual a atual");
+        if (passwordEncoder.matches(userDTO.getPassword(), userEntity.getPassword())) {
+            throw new ConflitException("A nova senha não pode ser igual à anterior.");
         }
 
         userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
@@ -112,6 +126,7 @@ public class UserService {
         return userMapper.toDTO(userRepository.save(userEntity));
     }
 
+    @CacheEvict(value = "users", key = "#email")
     public UserDTO updateActivity(UserDTO userDTO, String email) {
         UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException(message));
 
@@ -123,6 +138,7 @@ public class UserService {
         return userMapper.toDTO(userRepository.save(userEntity));
     }
 
+    @CacheEvict(value = "users", key = "#email")
     public UserDTO updateAccountPartial(UserDTO userDTO, String email) {
         UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException(message));
 

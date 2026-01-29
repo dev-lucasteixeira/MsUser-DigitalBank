@@ -1,9 +1,9 @@
 package com.lucasteixeira.bank.infratructure.handlers;
 
 import com.lucasteixeira.bank.domain.entities.UserEntity;
-import com.lucasteixeira.bank.application.enums.AccessEnum;
-import com.lucasteixeira.bank.application.enums.ActivityEnum;
-import com.lucasteixeira.bank.application.enums.MaritalStatusEnum;
+import com.lucasteixeira.bank.domain.enums.AccessEnum;
+import com.lucasteixeira.bank.domain.enums.ActivityEnum;
+import com.lucasteixeira.bank.domain.enums.MaritalStatusEnum;
 import com.lucasteixeira.bank.domain.repositories.UserRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
