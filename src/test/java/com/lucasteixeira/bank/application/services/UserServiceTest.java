@@ -358,52 +358,76 @@ class UserServiceTest {
     @Test
     @DisplayName("Deve retornar erro, pois o nome está igual ao atual")
     void updateUserWrongName() {
-        UUID id = UUID.randomUUID();
-        UserDTO inputUserDTO = new UserDTO(null, "123.456.789-10", "Mariana Souza", "teste@teste.com", "1234",
-                10, MaritalStatusEnum.SINGLE, AccessEnum.USER, ActivityEnum.ACTIVE);
+        String email = "teste@teste.com";
 
-        UserEntity userEntity = new UserEntity(id, "123.456.789-10", "Mariana Souza", "teste@teste.com", "1324",
-                28, MaritalStatusEnum.MARRIED, AccessEnum.USER, ActivityEnum.ACTIVE);
+        UserDTO inputDTO = new UserDTO();
+        inputDTO.setName("Lucas");
+        inputDTO.setAge(null);
+        inputDTO.setMaritalStatus(null);
 
-        doReturn(Optional.of(userEntity)).when(userRepository).findByEmail(inputUserDTO.getEmail());
+        UserEntity userEntity = new UserEntity();
+        userEntity.setName("Lucas");
+        userEntity.setAge(25);
 
-        assertThrows(ConflitException.class, () -> userService.updateUser(inputUserDTO, inputUserDTO.getEmail()));
+        doReturn(Optional.of(userEntity)).when(userRepository).findByEmail(email);
 
-        verify(userRepository, times(0)).save(any());
+        ConflitException exception = assertThrows(ConflitException.class, () -> {
+            userService.updateUser(inputDTO, email);
+        });
+
+        assertEquals("Nenhum dado foi alterado. Os valores enviados são idênticos aos atuais.", exception.getMessage());
+
+        verify(userRepository, never()).save(any());
     }
 
     @Test
     @DisplayName("Deve retornar erro, pois a idade está igual à atual")
     void updateUserWrongAge() {
-        UUID id = UUID.randomUUID();
-        UserDTO inputUserDTO = new UserDTO(null, "123.456.789-10", "Nome Diferente", "teste@teste.com", "1234",
-                28, MaritalStatusEnum.SINGLE, AccessEnum.USER, ActivityEnum.ACTIVE);
+        String email = "teste@teste.com";
 
-        UserEntity userEntity = new UserEntity(id, "123.456.789-10", "Mariana Souza", "teste@teste.com", "1324",
-                28, MaritalStatusEnum.MARRIED, AccessEnum.USER, ActivityEnum.ACTIVE);
+        UserEntity userEntity = new UserEntity();
+        userEntity.setEmail(email);
+        userEntity.setAge(30);
+        userEntity.setName("Lucas");
 
-        doReturn(Optional.of(userEntity)).when(userRepository).findByEmail(inputUserDTO.getEmail());
+        UserDTO inputDTO = new UserDTO();
+        inputDTO.setAge(30);
+        inputDTO.setName("Lucas");
 
-        assertThrows(ConflitException.class, () -> userService.updateUser(inputUserDTO, inputUserDTO.getEmail()));
+        doReturn(Optional.of(userEntity)).when(userRepository).findByEmail(email);
 
-        verify(userRepository, times(0)).save(any());
+        ConflitException exception = assertThrows(ConflitException.class, () -> {
+            userService.updateUser(inputDTO, email);
+        });
+
+        assertEquals("Nenhum dado foi alterado. Os valores enviados são idênticos aos atuais.", exception.getMessage());
+
+        verify(userRepository, never()).save(any());
     }
 
     @Test
     @DisplayName("Deve retornar erro, pois o estado civil está igual ao atual")
     void updateUserWrongMaritalStatus() {
-        UUID id = UUID.randomUUID();
-        UserDTO inputUserDTO = new UserDTO(null, "123.456.789-10", "Nome Diferente", "teste@teste.com", "1234",
-                30, MaritalStatusEnum.MARRIED, AccessEnum.USER, ActivityEnum.ACTIVE);
+        String email = "teste@teste.com";
 
-        UserEntity userEntity = new UserEntity(id, "123.456.789-10", "Mariana Souza", "teste@teste.com", "1324",
-                28, MaritalStatusEnum.MARRIED, AccessEnum.USER, ActivityEnum.ACTIVE);
+        UserEntity userEntity = new UserEntity();
+        userEntity.setEmail(email);
+        userEntity.setMaritalStatus(MaritalStatusEnum.SINGLE);
+        userEntity.setName("Lucas");
 
-        doReturn(Optional.of(userEntity)).when(userRepository).findByEmail(inputUserDTO.getEmail());
+        UserDTO inputDTO = new UserDTO();
+        inputDTO.setMaritalStatus(MaritalStatusEnum.SINGLE);
+        inputDTO.setName("Lucas");
 
-        assertThrows(ConflitException.class, () -> userService.updateUser(inputUserDTO, inputUserDTO.getEmail()));
+        doReturn(Optional.of(userEntity)).when(userRepository).findByEmail(email);
 
-        verify(userRepository, times(0)).save(any());
+        ConflitException exception = assertThrows(ConflitException.class, () -> {
+            userService.updateUser(inputDTO, email);
+        });
+
+        assertEquals("Nenhum dado foi alterado. Os valores enviados são idênticos aos atuais.", exception.getMessage());
+
+        verify(userRepository, never()).save(any());
     }
 
     @Test
@@ -432,19 +456,22 @@ class UserServiceTest {
     @DisplayName("Deve retornar erro, pois a senha está igual à atual")
     void updatePasswordWrongPassword() {
         String email = "teste@teste.com";
-
-        UserDTO inputUserDTO = new UserDTO();
-        inputUserDTO.setPassword("12345");
+        UserDTO userDTO = new UserDTO();
+        userDTO.setPassword("123456");
 
         UserEntity userEntity = new UserEntity();
         userEntity.setEmail(email);
-        userEntity.setPassword("12345");
+        userEntity.setPassword("hashAntigo");
 
         doReturn(Optional.of(userEntity)).when(userRepository).findByEmail(email);
 
-        assertThrows(ConflitException.class, () -> userService.updatePassword(inputUserDTO, email));
+        doReturn(true).when(passwordEncoder).matches(userDTO.getPassword(), userEntity.getPassword());
 
-        verify(userRepository, times(0)).save(any());
+        assertThrows(ConflitException.class, () -> {
+            userService.updatePassword(userDTO, email);
+        });
+
+        verify(userRepository, never()).save(any());
     }
 
     @Test
