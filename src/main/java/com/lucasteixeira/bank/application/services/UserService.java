@@ -29,6 +29,8 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
+    private final String message = "User not found";
+
     @Transactional
     public UserDTO createUser(UserDTO userDTO) {
 
@@ -58,7 +60,7 @@ public class UserService {
         if (!passwordEncoder.matches(userDTO.getPassword(), user.getPassword())) {
             throw new BadCredentialsException("Usuário ou senha inválidos");
         }
-        return "Bearer "+ jwtUtil.generateToken(userDTO.getEmail());
+        return jwtUtil.generateToken(userDTO.getEmail());
     }
 
     @Cacheable(value = "users", key = "#email")
@@ -159,6 +161,6 @@ public class UserService {
         return userMapper.toDTO(userRepository.save(userEntity));
     }
 
-    private final String message = "User not found";
+
 
 }

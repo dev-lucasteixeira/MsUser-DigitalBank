@@ -15,6 +15,9 @@ public class JwtUtil {
     @Value("${api.security.token.secret}")
     private String secretKey;
 
+    @Value("${api.security.token.expiration:3600000}")
+    private long expiration;
+
     private SecretKey getSecretKey(){
         byte[] key = Base64.getDecoder().decode(secretKey);
         return Keys.hmacShaKeyFor(key);
@@ -24,7 +27,7 @@ public class JwtUtil {
         return Jwts.builder()
                 .subject(username)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
+                .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSecretKey())
                 .compact();
     }
